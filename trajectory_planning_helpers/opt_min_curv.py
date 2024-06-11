@@ -3,6 +3,8 @@ import math
 import quadprog
 # import cvxopt
 import time
+import matplotlib.pyplot as plt
+
 
 
 def opt_min_curv(reftrack: np.ndarray,
