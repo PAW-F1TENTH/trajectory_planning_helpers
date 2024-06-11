@@ -4,6 +4,7 @@ import trajectory_planning_helpers.conv_filt
 
 
 def calc_vel_profile(ax_max_machines: np.ndarray,
+                     neg_ax_max_machines : np.ndarray,
                      kappa: np.ndarray,
                      el_lengths: np.ndarray,
                      closed: bool,
@@ -194,6 +195,7 @@ def calc_vel_profile(ax_max_machines: np.ndarray,
     else:
         vx_profile = __solver_fb_closed(p_ggv=p_ggv,
                                         ax_max_machines=ax_max_machines,
+                                        neg_ax_max_machines=neg_ax_max_machines,
                                         v_max=v_max,
                                         radii=radii,
                                         el_lengths=el_lengths,
@@ -295,6 +297,7 @@ def __solver_fb_unclosed(p_ggv: np.ndarray,
 
 def __solver_fb_closed(p_ggv: np.ndarray,
                        ax_max_machines: np.ndarray,
+                       neg_ax_max_machines: np.ndarray,
                        v_max: float,
                        radii: np.ndarray,
                        el_lengths: np.ndarray,
@@ -375,7 +378,7 @@ def __solver_fb_closed(p_ggv: np.ndarray,
 
     # calculate deceleration profile
     vx_profile_double = __solver_fb_acc_profile(p_ggv=p_ggv_double,
-                                                ax_max_machines=ax_max_machines,
+                                                ax_max_machines=neg_ax_max_machines,
                                                 v_max=v_max,
                                                 radii=radii_double,
                                                 el_lengths=el_lengths_double,
@@ -604,7 +607,8 @@ def calc_ax_poss(vx_start: float,
         ax_max_machines_tmp = np.interp(vx_start, ax_max_machines[:, 0], ax_max_machines[:, 1])
         ax_avail_vehicle = min(ax_avail_tires, ax_max_machines_tmp)
     else:
-        ax_avail_vehicle = ax_avail_tires
+        ax_max_machines_tmp = np.interp(vx_start, ax_max_machines[:, 0], ax_max_machines[:, 1])
+        ax_avail_vehicle = min(ax_avail_tires, ax_max_machines_tmp)
 
     # ------------------------------------------------------------------------------------------------------------------
     # CONSIDER DRAG ----------------------------------------------------------------------------------------------------
